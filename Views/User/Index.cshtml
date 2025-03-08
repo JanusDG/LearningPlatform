@@ -1,0 +1,21 @@
+﻿@model IEnumerable<LearningPlatform.Models.User>
+
+<div class="container">
+    <table class="table table-bordered">
+        <thead class="table-light">
+            <tr>
+                <th>Value</th>
+                <th>Id</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var item in Model)
+            {
+                <tr>
+                    <td>@item.Value</td>
+                    <td>@item.Id</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
