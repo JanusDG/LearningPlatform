@@ -1,0 +1,33 @@
+@model IEnumerable<LearningPlatform.Models.Course>
+
+@{
+    var userId = ViewBag.UserId;
+}
+
+<div class="container">
+    <h2>Select Courses for User</h2>
+
+    <form method="post" action="@Url.Action("RemoveUserFromCourse", "User")">
+        <input type="hidden" name="userId" value="@userId" />
+        <table class="table table-bordered">
+            <thead class="table-light">
+                <tr>
+                    <th>Select</th>
+                    <th>Value</th>
+                    <th>Id</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><input type="checkbox" name="selectedCourses" value="@item.Id" /></td>
+                        <td>@item.Value</td>
+                        <td>@item.Id</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <button type="submit" class="btn btn-primary">Remove</button>
+    </form>
+</div>

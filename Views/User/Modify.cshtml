@@ -1,0 +1,12 @@
+@model LearningPlatform.Models.User
+
+<div class="container">
+    <h2>Modify User</h2>
+    <form asp-action="Modify" method="post">
+        <div>
+            <label asp-for="Value" class="form-label">Value</label>
+            <input asp-for="Value" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+    </form>
+</div>

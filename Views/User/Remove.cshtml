@@ -1,0 +1,16 @@
+@model LearningPlatform.Models.User
+
+@{
+    var currentRoute = ViewContext.RouteData.Values["controller"];
+}
+
+<div class="container">
+    <h2>Confirm Removal</h2>
+    <p>Are you sure you want to remove the user with ID <strong>@Model.Id</strong> and Value <strong>@Model.Value</strong>?</p>
+
+    <form asp-action="ConfirmRemove" asp-controller="@currentRoute" method="post">
+        <input type="hidden" name="id" value="@Model.Id" />
+        <button type="submit" class="btn btn-danger">Yes, Remove</button>
+        <a href="@Url.Action("Index", currentRoute?.ToString())" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>

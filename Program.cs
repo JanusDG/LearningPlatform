@@ -1,6 +1,6 @@
 using LearningPlatform.Data;
 using Microsoft.EntityFrameworkCore;
-
+using LearningPlatform.Data.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +11,10 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<LearningPlatformDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("LearningPlatformDbContext") 
     ?? throw new InvalidOperationException("Connection string 'LearningPlatformDbContext' not found.")));
+
+// add the user service
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICourseService, CourseService>();
 
 var app = builder.Build();
 

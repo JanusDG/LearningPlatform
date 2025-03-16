@@ -1,4 +1,4 @@
-﻿@model IEnumerable<LearningPlatform.Models.User>
+﻿@model IEnumerable<LearningPlatform.Models.Course>
 
 @{
     var currentRoute = ViewContext.RouteData.Values["controller"];
@@ -26,9 +26,8 @@
                     <td>
                         <a href="@Url.Action("Modify", currentRoute?.ToString(), new { id = item.Id })" class="btn btn-warning btn-sm">Modify</a>
                         <a href="@Url.Action("Remove", currentRoute?.ToString(), new { id = item.Id })" class="btn btn-danger btn-sm">Remove</a>
-                        <a href="@Url.Action("AssignSelectedCourses", currentRoute?.ToString(), new { userId = item.Id })" class="btn btn-info btn-sm">Add to Course</a>
-                        <a href="@Url.Action("CancelSelectedCourses", currentRoute?.ToString(), new { userId = item.Id })" class="btn btn-info btn-sm">Remove from Course</a>
-                    
+                        <a href="@Url.Action("AssignSelectedUsers", currentRoute?.ToString(), new { courseId = item.Id })" class="btn btn-info btn-sm">Assign to User</a>
+                        <a href="@Url.Action("CancelSelectedUsers", currentRoute?.ToString(), new { courseId = item.Id })" class="btn btn-info btn-sm">Remove from User</a>
                     </td>
                 </tr>
             }
