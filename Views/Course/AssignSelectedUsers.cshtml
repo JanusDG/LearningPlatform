@@ -1,4 +1,5 @@
-@model IEnumerable<LearningPlatform.Models.User>
+@model IEnumerable<LearningPlatform.Models.UserEntityModel>
+@* @model IEnumerable<LearningPlatform.Models.UserViewModel> *@
 
 @{
     var CourseId = ViewBag.CourseId;
@@ -13,8 +14,7 @@
             <thead class="table-light">
                 <tr>
                     <th>Select</th>
-                    <th>Value</th>
-                    <th>Id</th>
+                    <th>Username</th>
                 </tr>
             </thead>
             <tbody>
@@ -22,8 +22,7 @@
                 {
                     <tr>
                         <td><input type="checkbox" name="selectedUsers" value="@item.Id" /></td>
-                        <td>@item.Value</td>
-                        <td>@item.Id</td>
+                        <td>@item.Username</td>
                     </tr>
                 }
             </tbody>

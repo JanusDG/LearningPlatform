@@ -3,6 +3,7 @@ using LearningPlatform.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LearningPlatform.Migrations
 {
     [DbContext(typeof(LearningPlatformDbContext))]
-    partial class LearningPlatformDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250413151651_ChangedUserModel")]
+    partial class ChangedUserModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

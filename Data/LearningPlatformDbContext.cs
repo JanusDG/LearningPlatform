@@ -12,8 +12,9 @@ namespace LearningPlatform.Data
             : base(options)
         {
         }
-        public DbSet<User> Users { get; set; }
-        public DbSet<Course> Courses { get; set; }
+        public DbSet<UserEntityModel> Users { get; set; }
+        public DbSet<CourseEntityModel> Courses { get; set; }
+        public DbSet<LessonEntityModel> Lessons { get; set; }
         public DbSet<UserCourse> UserCourses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

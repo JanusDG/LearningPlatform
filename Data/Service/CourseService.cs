@@ -12,29 +12,33 @@ namespace LearningPlatform.Data.Service
         {
             _context = context;
         }
-        public async Task<IEnumerable<Course>> GetAll()
+
+
+        public async Task<IEnumerable<CourseEntityModel>> GetAll()
         {
             var courses = await _context.Courses.ToListAsync();
             return courses; 
         }
-        public async Task Add(Course course)
+        public async Task Add(CourseEntityModel course)
+        // TODO
+        // ensure  unique naming of courses
         {
             _context.Courses.Add(course);
             await _context.SaveChangesAsync();
         }
 
-        public async Task Remove(Course course)
+        public async Task Remove(CourseEntityModel course)
         {
             _context.Courses.Remove(course);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Course> Find(int id) 
+        public async Task<CourseEntityModel> Find(int id) 
         {
             var CourseById = await _context.Courses.FindAsync(id);
             return CourseById;
         }
-        public async Task Update(Course course)
+        public async Task Update(CourseEntityModel course)
         {
             var existingCourse = await _context.Courses.FindAsync(course.Id);
             if (existingCourse != null)
@@ -43,12 +47,12 @@ namespace LearningPlatform.Data.Service
                 await _context.SaveChangesAsync();
             }
         }
-        public async Task<IEnumerable<User>> GetAllUsers()
+        public async Task<IEnumerable<UserEntityModel>> GetAllUsers()
         {
             var users = await _context.Users.ToListAsync();
             return users; 
         }
-        public async Task<IEnumerable<User>> GetAllCourseUsers(int courseId)
+        public async Task<IEnumerable<UserEntityModel>> GetAllCourseUsers(int courseId)
         {
             var courseUsers = await _context.UserCourses
                 .Where(uc => uc.CourseId == courseId)

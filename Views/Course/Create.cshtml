@@ -1,11 +1,14 @@
-﻿@model LearningPlatform.Models.Course
+﻿@model LearningPlatform.Models.CourseViewModel
 
 <div class="container">
     <h2>Add course</h2>
     <form asp-action="Create" method="post">
         <div>
-            <label asp-for="Value" class="form-label"></label>
-            <input asp-for="Value" class="form-control">
+            <label asp-for="Name" class="form-label"></label>
+            <input asp-for="Name" class="form-control" placeholder="My Course">
+
+            <label asp-for="Description" class="form-label"></label>
+            <input asp-for="Description" class="form-control" placeholder="A really nice course">
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>

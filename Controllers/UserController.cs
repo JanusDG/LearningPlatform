@@ -25,7 +25,7 @@ public class UserController : Controller
         return View();
     }
     [HttpPost]
-    public async Task<IActionResult> Create(User user)
+    public async Task<IActionResult> Create(UserEntityModel user)
     {
         if (ModelState.IsValid)
         {
@@ -72,14 +72,14 @@ public class UserController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Modify(User user)
+    public async Task<IActionResult> Modify(UserEntityModel user)
     {
         if (ModelState.IsValid)
         {
             var existingUser = await _userService.Find(user.Id);
             if (existingUser != null)
             {
-                existingUser.Value = user.Value;
+                existingUser.Username = user.Username;
 
                 await _userService.Update(existingUser);
                 return RedirectToAction("Index");

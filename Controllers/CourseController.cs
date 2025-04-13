@@ -9,6 +9,82 @@ public class CourseController : Controller
 {
     private readonly ICourseService _courseService;
     
+    private static CourseViewModel GetCourseViewModel(CourseEntityModel course)
+    {
+        return new CourseViewModel
+        {
+            UserCourses = course.UserCourses,
+            Name = course.Name,
+            Description = course.Description,
+            Lessons = course.Lessons,
+        };
+    }
+
+    private static List<CourseViewModel> GetCourseViewModels(List<CourseEntityModel> courses)
+    {
+        return courses.Select(courseEM => 
+            new CourseViewModel
+                {
+                    UserCourses = courseEM.UserCourses,
+                    Name = courseEM.Name,
+                    Description = courseEM.Description,
+                    Lessons = courseEM.Lessons,
+                }
+            ).ToList();
+    }
+
+    private static UserViewModel GetUserViewModel(UserEntityModel user)
+    {
+        return new UserViewModel
+        {
+            UserCourses = user.UserCourses,
+            Username = user.Username,
+            Firstname = user.Firstname,
+            Surname = user.Surname,
+            Email = user.Email,
+            Password = user.Password,
+        };
+    }
+
+    private static List<UserViewModel> GetUserViewModels(List<UserEntityModel> users)
+    {
+        return users.Select(userEM => 
+            new UserViewModel
+                {
+                    UserCourses = userEM.UserCourses,
+                    Username = userEM.Username,
+                    Firstname = userEM.Firstname,
+                    Surname = userEM.Surname,
+                    Email = userEM.Email,
+                    Password = userEM.Password,
+                }
+            ).ToList();
+    }
+
+    private static CourseEntityModel GetCourseEntityModel(CourseViewModel course)
+    {
+        return new CourseEntityModel
+        {
+            UserCourses = course.UserCourses,
+            Name = course.Name,
+            Description = course.Description,
+            Lessons = course.Lessons,
+        };
+    }
+
+    private static List<CourseEntityModel> GetCourseEntityModels(List<CourseViewModel> courses)
+    {
+        return courses.Select(courseEM => 
+            new CourseEntityModel
+                {
+                    UserCourses = courseEM.UserCourses,
+                    Name = courseEM.Name,
+                    Description = courseEM.Description,
+                    Lessons = courseEM.Lessons,
+                }
+            ).ToList();
+    }
+
     public CourseController(ICourseService courseService)
     {
         _courseService = courseService;
@@ -25,11 +101,11 @@ public class CourseController : Controller
         return View();
     }
     [HttpPost]
-    public async Task<IActionResult> Create(Course course)
+    public async Task<IActionResult> Create(CourseViewModel courseVM)
     {
         if (ModelState.IsValid)
         {
-            await _courseService.Add(course);
+            await _courseService.Add(GetCourseEntityModel(courseVM));
             return RedirectToAction("Index");
         }else 
         {
@@ -39,25 +115,26 @@ public class CourseController : Controller
                 Console.WriteLine(error.ErrorMessage);
             }
         }
-        return View(course);
+        return View(courseVM);
     }
     public async Task<IActionResult> Remove(int id)
     {
-        var course = await _courseService.Find(id);
-        if (course == null)
+        var courseEM = await _courseService.Find(id);
+        if (courseEM == null)
         {
             return NotFound();
         }
-        return View(course);
+        var courseVM = GetCourseViewModel(courseEM);
+        return View(courseVM);
     }
 
-    [HttpPost]
+    [HttpPost("ConfirmRemove/{id}")]
     public async Task<IActionResult> ConfirmRemove(int id)
     {
-        var course = await _courseService.Find(id);
-        if (course != null)
+        var courseEM = await _courseService.Find(id);
+        if (courseEM != null)
         {
-            await _courseService.Remove(course);
+            await _courseService.Remove(courseEM);
         }
         return RedirectToAction("Index");
     }
@@ -65,22 +142,24 @@ public class CourseController : Controller
     public async Task<IActionResult> Modify(int id)
     {
         var course = await _courseService.Find(id);
+        
         if (course == null)
         {
             return NotFound();
         }
-        return View(course);
+        var courseVM = GetCourseViewModel(course);
+        return View(courseVM);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Modify(Course course)
+    [HttpPost("SubmitModify/{id}")]
+    public async Task<IActionResult> SubmitModify(int id, CourseViewModel updatedCourse)
     {
         if (ModelState.IsValid)
         {
-            var existingCourse = await _courseService.Find(course.Id);
+            var existingCourse = await _courseService.Find(id);
             if (existingCourse != null)
             {
-                existingCourse.Value = course.Value;
+                existingCourse.Name = updatedCourse.Name;
 
                 await _courseService.Update(existingCourse);
                 return RedirectToAction("Index");
@@ -91,26 +170,28 @@ public class CourseController : Controller
             }
         }
 
-        return View(course);
+        return View(updatedCourse);
     }
 
-        public async Task<IActionResult> AssignSelectedUsers(int courseId)
+    public async Task<IActionResult> AssignSelectedUsers(int courseId)
     {
-        var users = await _courseService.GetAllUsers();
+        var userEMs = await _courseService.GetAllUsers();
+        // var userVMs = GetUserViewModels(userEMs);
+        var userVMs = userEMs; // TODO REMOVE THIS LATER
         
-        if (users == null || !users.Any())
+        if (userVMs == null || !userVMs.Any())
         {
             return Content("No users found in the database.");
         }
 
         ViewBag.CourseId = courseId;
-        return View(users);
+        return View(userVMs);
         }
 
     [HttpPost]
-    public async Task<IActionResult> AssignToUser(int courseId, List<int> selectedUsers)
+    public async Task<IActionResult> AssignToUser(int courseId, List<int> selectedUsersIds)
     {
-        foreach (var userId in selectedUsers)
+        foreach (var userId in selectedUsersIds)
         {
             var alreadyAssignedUsers = await _courseService.GetAllCourseUsers(courseId);
             var ifAdd = true;

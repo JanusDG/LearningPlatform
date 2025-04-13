@@ -7,13 +7,13 @@ namespace LearningPlatform.Data.Service
 {
     public interface ICourseService
     {
-        Task<IEnumerable<Course>> GetAll();
-        Task Add(Course course);
-        Task Remove(Course course);
-        Task Update(Course course);
-        Task<Course> Find(int Id); 
-        Task<IEnumerable<User>> GetAllUsers();
-        Task<IEnumerable<User>> GetAllCourseUsers(int courseId);
+        Task<IEnumerable<CourseEntityModel>> GetAll();
+        Task Add(CourseEntityModel course);
+        Task Remove(CourseEntityModel course);
+        Task Update(CourseEntityModel course);
+        Task<CourseEntityModel> Find(int Id); 
+        Task<IEnumerable<UserEntityModel>> GetAllUsers();
+        Task<IEnumerable<UserEntityModel>> GetAllCourseUsers(int courseId);
         Task AssignCourseUser(int courseId, int userId);
         Task RemoveCourseUser(int courseId, int userId);
 

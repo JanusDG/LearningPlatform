@@ -3,6 +3,7 @@ using LearningPlatform.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LearningPlatform.Migrations
 {
     [DbContext(typeof(LearningPlatformDbContext))]
-    partial class LearningPlatformDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250408152232_RemoveCourseTable")]
+    partial class RemoveCourseTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -20,6 +23,23 @@ namespace LearningPlatform.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("LearningPlatform.Models.Course", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Course");
+                });
 
             modelBuilder.Entity("LearningPlatform.Models.CourseEntityModel", b =>
                 {
@@ -66,6 +86,23 @@ namespace LearningPlatform.Migrations
                     b.ToTable("Lessons");
                 });
 
+            modelBuilder.Entity("LearningPlatform.Models.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
             modelBuilder.Entity("LearningPlatform.Models.UserCourse", b =>
                 {
                     b.Property<int>("UserId")
@@ -74,44 +111,16 @@ namespace LearningPlatform.Migrations
                     b.Property<int>("CourseId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("CourseEntityModelId")
+                        .HasColumnType("int");
+
                     b.HasKey("UserId", "CourseId");
+
+                    b.HasIndex("CourseEntityModelId");
 
                     b.HasIndex("CourseId");
 
                     b.ToTable("UserCourses");
-                });
-
-            modelBuilder.Entity("LearningPlatform.Models.UserEntityModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Firstname")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Surname")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("LearningPlatform.Models.LessonEntityModel", b =>
@@ -123,13 +132,17 @@ namespace LearningPlatform.Migrations
 
             modelBuilder.Entity("LearningPlatform.Models.UserCourse", b =>
                 {
-                    b.HasOne("LearningPlatform.Models.CourseEntityModel", "Course")
+                    b.HasOne("LearningPlatform.Models.CourseEntityModel", null)
+                        .WithMany("UserCourses")
+                        .HasForeignKey("CourseEntityModelId");
+
+                    b.HasOne("LearningPlatform.Models.Course", "Course")
                         .WithMany("UserCourses")
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("LearningPlatform.Models.UserEntityModel", "User")
+                    b.HasOne("LearningPlatform.Models.User", "User")
                         .WithMany("UserCourses")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -140,6 +153,11 @@ namespace LearningPlatform.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("LearningPlatform.Models.Course", b =>
+                {
+                    b.Navigation("UserCourses");
+                });
+
             modelBuilder.Entity("LearningPlatform.Models.CourseEntityModel", b =>
                 {
                     b.Navigation("Lessons");
@@ -147,7 +165,7 @@ namespace LearningPlatform.Migrations
                     b.Navigation("UserCourses");
                 });
 
-            modelBuilder.Entity("LearningPlatform.Models.UserEntityModel", b =>
+            modelBuilder.Entity("LearningPlatform.Models.User", b =>
                 {
                     b.Navigation("UserCourses");
                 });

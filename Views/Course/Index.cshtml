@@ -1,4 +1,4 @@
-﻿@model IEnumerable<LearningPlatform.Models.Course>
+﻿@model IEnumerable<LearningPlatform.Models.CourseEntityModel>
 
 @{
     var currentRoute = ViewContext.RouteData.Values["controller"];
@@ -12,8 +12,8 @@
     <table class="table table-bordered">
         <thead class="table-light">
             <tr>
-                <th>Value</th>
-                <th>Id</th>
+                <th>Name</th>
+                <th>Description</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -21,8 +21,8 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>@item.Value</td>
-                    <td>@item.Id</td>
+                    <td>@item.Name</td>
+                    <td>@item.Description</td>
                     <td>
                         <a href="@Url.Action("Modify", currentRoute?.ToString(), new { id = item.Id })" class="btn btn-warning btn-sm">Modify</a>
                         <a href="@Url.Action("Remove", currentRoute?.ToString(), new { id = item.Id })" class="btn btn-danger btn-sm">Remove</a>
