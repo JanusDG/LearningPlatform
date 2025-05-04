@@ -1,5 +1,4 @@
-@model IEnumerable<LearningPlatform.Models.UserEntityModel>
-@* @model IEnumerable<LearningPlatform.Models.UserViewModel> *@
+@model IEnumerable<LearningPlatform.Models.UserViewIdModel>
 
 @{
     var CourseId = ViewBag.CourseId;
@@ -21,7 +20,7 @@
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td><input type="checkbox" name="selectedUsers" value="@item.Id" /></td>
+                        <td><input type="checkbox" name="selectedUsersIds" value="@item.Id" /></td>
                         <td>@item.Username</td>
                     </tr>
                 }

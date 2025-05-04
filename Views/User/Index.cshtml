@@ -1,4 +1,4 @@
-﻿@model IEnumerable<LearningPlatform.Models.User>
+﻿@model IEnumerable<LearningPlatform.Models.UserViewIdModel>
 
 @{
     var currentRoute = ViewContext.RouteData.Values["controller"];
@@ -13,7 +13,6 @@
         <thead class="table-light">
             <tr>
                 <th>Value</th>
-                <th>Id</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -21,8 +20,7 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>@item.Value</td>
-                    <td>@item.Id</td>
+                    <td>@item.Username</td>
                     <td>
                         <a href="@Url.Action("Modify", currentRoute?.ToString(), new { id = item.Id })" class="btn btn-warning btn-sm">Modify</a>
                         <a href="@Url.Action("Remove", currentRoute?.ToString(), new { id = item.Id })" class="btn btn-danger btn-sm">Remove</a>

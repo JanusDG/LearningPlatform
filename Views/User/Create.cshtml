@@ -1,11 +1,19 @@
-﻿@model LearningPlatform.Models.User
+﻿@model LearningPlatform.Models.UserEntityModel
 
 <div class="container">
     <h2>Add user</h2>
     <form asp-action="Create" method="post">
         <div>
-            <label asp-for="Value" class="form-label"></label>
-            <input asp-for="Value" class="form-control">
+            <label asp-for="Username" class="form-label"></label>
+            <input asp-for="Username" class="form-control">
+            <label asp-for="Firstname" class="form-label"></label>
+            <input asp-for="Firstname" class="form-control">
+            <label asp-for="Surname" class="form-label"></label>
+            <input asp-for="Surname" class="form-control">
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" class="form-control">
+            <label asp-for="Password" class="form-label"></label>
+            <input asp-for="Password" class="form-control">
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>

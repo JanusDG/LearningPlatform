@@ -3,14 +3,20 @@
 ## TODO
 * Authorize (via tokens or other) (redirect to login)
 
-* course -> lessons(link to materials)
+DONE * course -> lessons(link to materials)
 
-* add other properties to models (paid course, ) (+/- 10 properties)
+DONE * add other properties to models (paid course, ) (+/- 10 properties)
 
-* Models -> poco models
+DONE * Models -> poco models
 
-* one model for db, other(s) for UI (model for UI - without id, id - via routing)
+DONE * one model for db, other(s) for UI (model for UI - without id, id - via routing)
 
 * http post -> change some of them to put (post - create, put - update)
 
+* move logic from controllers to service
 
+* DONE rename async methods
+
+* DONE Model -> view model with (multiple display)
+        -> update model without id(where edit)
+        -> poco model for db

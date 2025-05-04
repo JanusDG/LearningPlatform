@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LearningPlatform.Models;
 using LearningPlatform.Data.Service;
+using LearningPlatform.Helpers;
 namespace LearningPlatform.Controllers;
 
 public class UserController : Controller
@@ -16,20 +17,32 @@ public class UserController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var users = await _userService.GetAll();
-        return View(users);
+        var users = await _userService.GetAllAsync();
+        var userVMs = users.Select(user => ViewEntityMapper.GetUserViewIdModel(user)).ToList();
+        return View(userVMs);
     }
 
     public IActionResult Create()
     {
-        return View();
+        var model = new UserEntityModel
+        {
+            //todo add some string hash for the default value for Username
+            Username = "johndoe",
+            Firstname = "John",
+            Surname = "Doe",
+            Email = "john@example.com",
+            Password = "123456" 
+        };
+
+        return View(model);
     }
+
     [HttpPost]
-    public async Task<IActionResult> Create(UserEntityModel user)
+    public async Task<IActionResult> Create(UserEntityModel userEM)
     {
         if (ModelState.IsValid)
         {
-            await _userService.Add(user);
+            await _userService.AddAsync(userEM);
             return RedirectToAction("Index");
         }else 
         {
@@ -39,71 +52,71 @@ public class UserController : Controller
                 Console.WriteLine(error.ErrorMessage);
             }
         }
-        return View(user);
+        return View(userEM);
     }
     public async Task<IActionResult> Remove(int id)
     {
-        var user = await _userService.Find(id);
-        if (user == null)
+        var userEM = await _userService.FindUserByIdAsync(id);
+        if (userEM == null)
         {
             return NotFound();
         }
-        return View(user);
+        var userVM = ViewEntityMapper.GetUserViewModel(userEM);
+        return View(userVM);
     }
-    [HttpPost]
+    [HttpPost("Course/ConfirmRemove/{id}")]
     public async Task<IActionResult> ConfirmRemove(int id)
     {
-        var user = await _userService.Find(id);
-        if (user != null)
+        var userEM = await _userService.FindUserByIdAsync(id);
+        if (userEM != null)
         {
-            await _userService.Remove(user);
+            await _userService.RemoveAsync(userEM);
         }
         return RedirectToAction("Index");
     }
 
     public async Task<IActionResult> Modify(int id)
     {
-        var user = await _userService.Find(id);
+        var user = await _userService.FindUserByIdAsync(id);
         if (user == null)
         {
             return NotFound();
         }
-        return View(user);
+        var userVM = ViewEntityMapper.GetUserViewModel(user);
+        return View(userVM);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Modify(UserEntityModel user)
+    [HttpPost("User/SubmitModify/{id}")]
+    public async Task<IActionResult> SubmitModify(int id, UserViewModel updatedUser)
     {
         if (ModelState.IsValid)
         {
-            var existingUser = await _userService.Find(user.Id);
-            if (existingUser != null)
+            await _userService.UpdateUserByIDAsync(id, updatedUser);
+            return RedirectToAction("Index");   
+        }else 
+        {
+            var errors = ModelState.Values.SelectMany(v => v.Errors);
+            foreach (var error in errors)
             {
-                existingUser.Username = user.Username;
-
-                await _userService.Update(existingUser);
-                return RedirectToAction("Index");
-            }
-            else
-            {
-                ModelState.AddModelError("", "User not found.");
+                Console.WriteLine(error.ErrorMessage);
             }
         }
 
-        return View(user);
+        return View(updatedUser);
     }
 
     public async Task<IActionResult> AssignSelectedCourses(int userId)
     {
-        var courses = await _userService.GetAllCourses();
-        
-        if (courses == null || !courses.Any())
+        var courses = await _userService.GetAllCoursesAsync();
+        var courseVMs = courses.Select(course => ViewEntityMapper.GetCourseViewIdModel(course)).ToList();
+
+        if (courseVMs == null || !courseVMs.Any())
         {
             return Content("No courses found in the database.");
         }
 
         ViewBag.UserId = userId;
-        return View(courses);
+        return View(courseVMs);
         }
 
     [HttpPost]
@@ -111,7 +124,7 @@ public class UserController : Controller
     {
         foreach (var courseId in selectedCourses)
         {
-            var alreadyAssignedCourses = await _userService.GetAllUserCourses(userId);
+            var alreadyAssignedCourses = await _userService.GetAllUserCoursesAsync(userId);
             var ifAdd = true;
             foreach (var existingCourse in alreadyAssignedCourses)
             {
@@ -123,7 +136,7 @@ public class UserController : Controller
             }
             if (ifAdd)
             {
-                await _userService.AssignUserCourse(userId, courseId);
+                await _userService.AssignUserCourseAsync(userId, courseId);
             }
         }
         return RedirectToAction("Index", "User");
@@ -131,15 +144,15 @@ public class UserController : Controller
 
     public async Task<IActionResult> CancelSelectedCourses(int userId)
     {
-        var userCourses = await _userService.GetAllUserCourses(userId);
-        
-        if (userCourses == null || !userCourses.Any())
+        var userCourseEMs = await _userService.GetAllUserCoursesAsync(userId);
+        var courseVMs = userCourseEMs.Select(course => ViewEntityMapper.GetCourseViewIdModel(course)).ToList();
+        if (courseVMs == null || !courseVMs.Any())
         {
-            return Content("No userCourses found in the database.");
+            return Content("No courses found in the database for the user.");
         }
 
         ViewBag.UserId = userId;
-        return View(userCourses);
+        return View(courseVMs);
         }
 
     [HttpPost]
@@ -147,7 +160,7 @@ public class UserController : Controller
     {
         foreach (var courseId in selectedCourses)
         {
-            var alreadyAssignedCourses = await _userService.GetAllUserCourses(userId);
+            var alreadyAssignedCourses = await _userService.GetAllUserCoursesAsync(userId);
             var ifRemove = false;
             foreach (var existingCourse in alreadyAssignedCourses)
             {
@@ -159,7 +172,7 @@ public class UserController : Controller
             }
             if (ifRemove)
             {
-                await _userService.RemoveUserCourse(userId, courseId);
+                await _userService.RemoveUserCourseAsync(userId, courseId);
             }
         }
         return RedirectToAction("Index", "User");

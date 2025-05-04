@@ -3,88 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LearningPlatform.Models;
 using LearningPlatform.Data.Service;
+using LearningPlatform.Helpers;
 namespace LearningPlatform.Controllers;
 
 public class CourseController : Controller
 {
     private readonly ICourseService _courseService;
     
-    private static CourseViewModel GetCourseViewModel(CourseEntityModel course)
-    {
-        return new CourseViewModel
-        {
-            UserCourses = course.UserCourses,
-            Name = course.Name,
-            Description = course.Description,
-            Lessons = course.Lessons,
-        };
-    }
-
-    private static List<CourseViewModel> GetCourseViewModels(List<CourseEntityModel> courses)
-    {
-        return courses.Select(courseEM => 
-            new CourseViewModel
-                {
-                    UserCourses = courseEM.UserCourses,
-                    Name = courseEM.Name,
-                    Description = courseEM.Description,
-                    Lessons = courseEM.Lessons,
-                }
-            ).ToList();
-    }
-
-    private static UserViewModel GetUserViewModel(UserEntityModel user)
-    {
-        return new UserViewModel
-        {
-            UserCourses = user.UserCourses,
-            Username = user.Username,
-            Firstname = user.Firstname,
-            Surname = user.Surname,
-            Email = user.Email,
-            Password = user.Password,
-        };
-    }
-
-    private static List<UserViewModel> GetUserViewModels(List<UserEntityModel> users)
-    {
-        return users.Select(userEM => 
-            new UserViewModel
-                {
-                    UserCourses = userEM.UserCourses,
-                    Username = userEM.Username,
-                    Firstname = userEM.Firstname,
-                    Surname = userEM.Surname,
-                    Email = userEM.Email,
-                    Password = userEM.Password,
-                }
-            ).ToList();
-    }
-
-    private static CourseEntityModel GetCourseEntityModel(CourseViewModel course)
-    {
-        return new CourseEntityModel
-        {
-            UserCourses = course.UserCourses,
-            Name = course.Name,
-            Description = course.Description,
-            Lessons = course.Lessons,
-        };
-    }
-
-    private static List<CourseEntityModel> GetCourseEntityModels(List<CourseViewModel> courses)
-    {
-        return courses.Select(courseEM => 
-            new CourseEntityModel
-                {
-                    UserCourses = courseEM.UserCourses,
-                    Name = courseEM.Name,
-                    Description = courseEM.Description,
-                    Lessons = courseEM.Lessons,
-                }
-            ).ToList();
-    }
-
     public CourseController(ICourseService courseService)
     {
         _courseService = courseService;
@@ -92,20 +17,29 @@ public class CourseController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var courses = await _courseService.GetAll();
-        return View(courses);
+        var courses = await _courseService.GetAllCoursesAsync();
+        var courseVMs = courses.Select(course => ViewEntityMapper.GetCourseViewIdModel(course)).ToList();
+        return View(courseVMs);
     }
 
     public IActionResult Create()
     {
-        return View();
+        var model = new CourseViewModel
+        {
+            //todo add some string hash for the default value for Name
+            Name = "My Course",
+            Description = "A really nice course"
+        };
+
+        return View(model);
     }
     [HttpPost]
     public async Task<IActionResult> Create(CourseViewModel courseVM)
     {
         if (ModelState.IsValid)
         {
-            await _courseService.Add(GetCourseEntityModel(courseVM));
+            var courseEM = ViewEntityMapper.GetCourseEntityModel(courseVM);
+            await _courseService.AddCourseAsync(courseEM);
             return RedirectToAction("Index");
         }else 
         {
@@ -119,66 +53,57 @@ public class CourseController : Controller
     }
     public async Task<IActionResult> Remove(int id)
     {
-        var courseEM = await _courseService.Find(id);
+        var courseEM = await _courseService.FindCourseByIdAsync(id);
         if (courseEM == null)
         {
             return NotFound();
         }
-        var courseVM = GetCourseViewModel(courseEM);
+        var courseVM = ViewEntityMapper.GetCourseViewModel(courseEM);
         return View(courseVM);
     }
 
     [HttpPost("ConfirmRemove/{id}")]
     public async Task<IActionResult> ConfirmRemove(int id)
     {
-        var courseEM = await _courseService.Find(id);
-        if (courseEM != null)
-        {
-            await _courseService.Remove(courseEM);
-        }
+        await _courseService.RemoveCourseByIDAsync(id);
         return RedirectToAction("Index");
     }
 
     public async Task<IActionResult> Modify(int id)
     {
-        var course = await _courseService.Find(id);
-        
+        var course = await _courseService.FindCourseByIdAsync(id);
         if (course == null)
         {
             return NotFound();
         }
-        var courseVM = GetCourseViewModel(course);
+        var courseVM = ViewEntityMapper.GetCourseViewModel(course);
         return View(courseVM);
     }
 
     [HttpPost("SubmitModify/{id}")]
     public async Task<IActionResult> SubmitModify(int id, CourseViewModel updatedCourse)
     {
+        
         if (ModelState.IsValid)
         {
-            var existingCourse = await _courseService.Find(id);
-            if (existingCourse != null)
+            await _courseService.UpdateCourseByIDAsync(id, updatedCourse);
+            return RedirectToAction("Index");   
+        }else 
+        {
+            var errors = ModelState.Values.SelectMany(v => v.Errors);
+            foreach (var error in errors)
             {
-                existingCourse.Name = updatedCourse.Name;
-
-                await _courseService.Update(existingCourse);
-                return RedirectToAction("Index");
-            }
-            else
-            {
-                ModelState.AddModelError("", "Course not found.");
+                Console.WriteLine(error.ErrorMessage);
             }
         }
-
+        
         return View(updatedCourse);
     }
 
     public async Task<IActionResult> AssignSelectedUsers(int courseId)
     {
-        var userEMs = await _courseService.GetAllUsers();
-        // var userVMs = GetUserViewModels(userEMs);
-        var userVMs = userEMs; // TODO REMOVE THIS LATER
-        
+        var userEMs = await _courseService.GetAllUsersAsync();
+        var userVMs = userEMs.Select(user => ViewEntityMapper.GetUserViewIdModel(user)).ToList();
         if (userVMs == null || !userVMs.Any())
         {
             return Content("No users found in the database.");
@@ -193,7 +118,7 @@ public class CourseController : Controller
     {
         foreach (var userId in selectedUsersIds)
         {
-            var alreadyAssignedUsers = await _courseService.GetAllCourseUsers(courseId);
+            var alreadyAssignedUsers = await _courseService.GetAllCourseUsersAsync(courseId);
             var ifAdd = true;
             foreach (var existingUser in alreadyAssignedUsers)
             {
@@ -205,7 +130,7 @@ public class CourseController : Controller
             }
             if (ifAdd)
             {
-                await _courseService.AssignCourseUser(courseId, userId);
+                await _courseService.AssignCourseUserAsync(courseId, userId);
             }
         }
         return RedirectToAction("Index", "Course");
@@ -213,8 +138,8 @@ public class CourseController : Controller
 
     public async Task<IActionResult> CancelSelectedUsers(int courseId)
     {
-        var courseUsers = await _courseService.GetAllCourseUsers(courseId);
-        
+        var courseUsersEMs = await _courseService.GetAllCourseUsersAsync(courseId);
+        var courseUsers = courseUsersEMs.Select(user => ViewEntityMapper.GetUserViewIdModel(user)).ToList();
         if (courseUsers == null || !courseUsers.Any())
         {
             return Content("No courseUsers found in the database.");
@@ -229,7 +154,7 @@ public class CourseController : Controller
     {
         foreach (var userId in selectedUsers)
         {
-            var alreadyAssignedUsers = await _courseService.GetAllCourseUsers(courseId);
+            var alreadyAssignedUsers = await _courseService.GetAllCourseUsersAsync(courseId);
             var ifRemove = false;
             foreach (var existingUser in alreadyAssignedUsers)
             {
@@ -241,7 +166,7 @@ public class CourseController : Controller
             }
             if (ifRemove)
             {
-                await _courseService.RemoveCourseUser(courseId, userId);
+                await _courseService.RemoveCourseUserAsync(courseId, userId);
             }
         }
         return RedirectToAction("Index", "Course");

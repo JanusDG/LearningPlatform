@@ -7,15 +7,16 @@ namespace LearningPlatform.Data.Service
 {
     public interface IUserService
     {
-        Task<IEnumerable<UserEntityModel>> GetAll();
-        Task Add(UserEntityModel user);
-        Task Remove(UserEntityModel user);
-        Task Update(UserEntityModel user);
-        Task<UserEntityModel> Find(int id); 
-        Task<IEnumerable<CourseEntityModel>> GetAllCourses();
-        Task<IEnumerable<CourseEntityModel>> GetAllUserCourses(int userId);
-        Task AssignUserCourse(int userId, int courseId); 
-        Task RemoveUserCourse(int userId, int courseId);
+        Task<IEnumerable<UserEntityModel>> GetAllAsync();
+        Task AddAsync(UserEntityModel user);
+        Task RemoveAsync(UserEntityModel user);
+        Task UpdateAsync(UserEntityModel user);
+        Task UpdateUserByIDAsync(int id, UserViewModel user);
+        Task<UserEntityModel> FindUserByIdAsync(int id); 
+        Task<IEnumerable<CourseEntityModel>> GetAllCoursesAsync();
+        Task<IEnumerable<CourseEntityModel>> GetAllUserCoursesAsync(int userId);
+        Task AssignUserCourseAsync(int userId, int courseId); 
+        Task RemoveUserCourseAsync(int userId, int courseId);
 
 
 

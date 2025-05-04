@@ -1,11 +1,22 @@
-@model LearningPlatform.Models.User
+@model LearningPlatform.Models.UserViewModel
+
+@{
+    var currentRoute = ViewContext.RouteData.Values["controller"];
+    var currentId = ViewContext.RouteData.Values["id"];
+}
 
 <div class="container">
     <h2>Modify User</h2>
-    <form asp-action="Modify" method="post">
+    <form asp-action="SubmitModify" method="post" asp-controller="@currentRoute" asp-route-id="@currentId" method="post">
         <div>
-            <label asp-for="Value" class="form-label">Value</label>
-            <input asp-for="Value" class="form-control" required>
+            <label asp-for="Username" class="form-label">Username</label>
+            <input asp-for="Username" class="form-control" required>
+            <label asp-for="Firstname" class="form-label"></label>
+            <input asp-for="Firstname" class="form-control">
+            <label asp-for="Surname" class="form-label"></label>
+            <input asp-for="Surname" class="form-control">
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" class="form-control">
         </div>
         <button type="submit" class="btn btn-primary">Save Changes</button>
     </form>

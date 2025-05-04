@@ -1,4 +1,4 @@
-@model IEnumerable<LearningPlatform.Models.Course>
+@model IEnumerable<LearningPlatform.Models.CourseViewIdModel>
 
 @{
     var userId = ViewBag.UserId;
@@ -13,8 +13,7 @@
             <thead class="table-light">
                 <tr>
                     <th>Select</th>
-                    <th>Value</th>
-                    <th>Id</th>
+                    <th>Name</th>
                 </tr>
             </thead>
             <tbody>
@@ -22,8 +21,8 @@
                 {
                     <tr>
                         <td><input type="checkbox" name="selectedCourses" value="@item.Id" /></td>
-                        <td>@item.Value</td>
-                        <td>@item.Id</td>
+                        <td>@item.Name</td>
+                    
                     </tr>
                 }
             </tbody>

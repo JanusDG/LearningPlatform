@@ -12,29 +12,30 @@ namespace LearningPlatform.Data.Service
         {
             _context = context;
         }
-        public async Task<IEnumerable<UserEntityModel>> GetAll()
+        public async Task<IEnumerable<UserEntityModel>> GetAllAsync()
         {
             var users = await _context.Users.ToListAsync();
             return users; 
         }
-        public async Task Add(UserEntityModel user)
+        public async Task AddAsync(UserEntityModel user)
         {
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
         }
 
-        public async Task Remove(UserEntityModel user)
+        public async Task RemoveAsync(UserEntityModel user)
         {
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<UserEntityModel> Find(int id) 
+        public async Task<UserEntityModel> FindUserByIdAsync(int id) 
         {
             var userById = await _context.Users.FindAsync(id);
             return userById;
         }
-        public async Task Update(UserEntityModel user)
+
+        public async Task UpdateAsync(UserEntityModel user)
         {
             var existingUser = await _context.Users.FindAsync(user.Id);
             if (existingUser != null)
@@ -43,12 +44,21 @@ namespace LearningPlatform.Data.Service
                 await _context.SaveChangesAsync();
             }
         }
-        public async Task<IEnumerable<CourseEntityModel>> GetAllCourses()
+        public async Task UpdateUserByIDAsync(int id, UserViewModel updatedCourse)
+        {
+            var existingCourse = await FindUserByIdAsync(id);
+            if (existingCourse != null)
+            {
+                _context.Entry(existingCourse).CurrentValues.SetValues(updatedCourse);
+                await _context.SaveChangesAsync();
+            }
+        }
+        public async Task<IEnumerable<CourseEntityModel>> GetAllCoursesAsync()
         {
             var courses = await _context.Courses.ToListAsync();
             return courses; 
         }
-        public async Task<IEnumerable<CourseEntityModel>> GetAllUserCourses(int userId)
+        public async Task<IEnumerable<CourseEntityModel>> GetAllUserCoursesAsync(int userId)
         {
             var userCourses = await _context.UserCourses
                 .Where(uc => uc.UserId == userId)
@@ -59,14 +69,14 @@ namespace LearningPlatform.Data.Service
                 .ToListAsync();
             return userCourses; 
         }
-        public async Task AssignUserCourse(int userId, int courseId)
+        public async Task AssignUserCourseAsync(int userId, int courseId)
         {
             _context.UserCourses.Add(new UserCourse { UserId = userId, CourseId = courseId });
             await _context.SaveChangesAsync();
 
         }
 
-        public async Task RemoveUserCourse(int userId, int courseId)
+        public async Task RemoveUserCourseAsync(int userId, int courseId)
         {
             var userCourse = await _context.UserCourses
                 .FirstOrDefaultAsync(uc => uc.UserId == userId && uc.CourseId == courseId);
