@@ -12,6 +12,8 @@ namespace LearningPlatform.Models
         public string Username {get; set;} = default!;
         [Required]
         public string Firstname {get; set;} = default!;
+         [Required]
+        public string Role {get; set;} = default!;
         [Required]
         public string Surname {get; set;} = default!;
         [Required]

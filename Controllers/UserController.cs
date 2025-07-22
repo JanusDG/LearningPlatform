@@ -29,6 +29,7 @@ public class UserController : Controller
             //todo add some string hash for the default value for Username
             Username = "johndoe",
             Firstname = "John",
+            Role = "User", 
             Surname = "Doe",
             Email = "john@example.com",
             Password = "123456" 
