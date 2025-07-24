@@ -1,5 +1,6 @@
 -- sudo /opt/mssql-tools18/bin/sqlcmd -S localhost -U SA -P "123?GHUiop" -i db_setup.sql -C
 
+SELECT * FROM Users;
 
 IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = N'LearningPlatform')
 BEGIN

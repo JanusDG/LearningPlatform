@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using LearningPlatform.Models;
 using LearningPlatform.Data.Service;
 using LearningPlatform.Helpers;
+using LearningPlatform.Handlers;
 namespace LearningPlatform.Controllers;
 
 public class UserController : Controller
@@ -43,6 +44,7 @@ public class UserController : Controller
     {
         if (ModelState.IsValid)
         {
+            userEM.Password = PasswordHashHandler.HashPassword(userEM.Password);
             await _userService.AddAsync(userEM);
             return RedirectToAction("Index");
         }else 

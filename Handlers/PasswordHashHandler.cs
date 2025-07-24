@@ -2,6 +2,8 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 
+namespace LearningPlatform.Handlers;
+
 public class PasswordHashHandler
 {
     private const int SaltSize = 16; // 128 bit
@@ -33,6 +35,8 @@ public class PasswordHashHandler
 
     public static bool VerifyHashedPassword(string hashedPassword, string providedPassword)
     {
+        Console.WriteLine($"Verifying password: {providedPassword}");
+        Console.WriteLine($"Hashed password: {hashedPassword}");
         var decoded = Convert.FromBase64String(hashedPassword);
 
         // Extract salt
@@ -54,4 +58,5 @@ public class PasswordHashHandler
         // Compare the original key with the newly derived one
         return CryptographicOperations.FixedTimeEquals(originalKey, newKey);
     }
+
 }

@@ -9,7 +9,10 @@
             <label asp-for="Firstname" class="form-label"></label>
             <input asp-for="Firstname" class="form-control">
             <label asp-for="Role" class="form-label"></label>
-            <input asp-for="Role" class="form-control">
+            <select asp-for="Role" class="form-control">
+                <option value="User">User</option>
+                <option value="Admin">Admin</option>
+            </select>
             <label asp-for="Surname" class="form-label"></label>
             <input asp-for="Surname" class="form-control">
             <label asp-for="Email" class="form-label"></label>

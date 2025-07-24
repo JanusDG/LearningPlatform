@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 using LearningPlatform.Models;
+using LearningPlatform.Handlers;
 
 
 namespace LearningPlatform.Data.Service
@@ -39,7 +40,7 @@ namespace LearningPlatform.Data.Service
                 return null;
             }
             var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Username == username && u.Password == password);
+                .FirstOrDefaultAsync(u => u.Username == username);
 
             if (user == null || !PasswordHashHandler.VerifyHashedPassword(user.Password, password))
             {
@@ -47,8 +48,6 @@ namespace LearningPlatform.Data.Service
             }
 
 
-            // Assuming you have a method to validate user credentials
-            // return await ValidateUserCredentialsAsync(username, password);
             return new LoginResponseModel
             {
                 AccessToken = GenerateToken(user.Username, user.Role),

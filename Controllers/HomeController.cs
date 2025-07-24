@@ -1,6 +1,11 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using LearningPlatform.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authorization;
+
+using LearningPlatform.Data.Service;
 
 namespace LearningPlatform.Controllers;
 
@@ -13,6 +18,7 @@ public class HomeController : Controller
         _logger = logger;
     }
 
+    [Authorize]
     public IActionResult Index()
     {
         return View();

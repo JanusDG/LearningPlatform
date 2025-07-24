@@ -32,7 +32,7 @@ builder.Services.AddAuthentication(options =>
 .AddJwtBearer(jwtOptions =>
 {
 
-	jwtOptions.RequireHttpsMetadata = false;
+    jwtOptions.RequireHttpsMetadata = false;
     jwtOptions.SaveToken = true;
     jwtOptions.TokenValidationParameters = new TokenValidationParameters
     {
@@ -43,6 +43,26 @@ builder.Services.AddAuthentication(options =>
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtConfig:Key"] ?? throw new InvalidOperationException("JWT Key not found in configuration."))),
+    };
+    
+    jwtOptions.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            var token = context.Request.Cookies["jwt"];
+            if (!string.IsNullOrEmpty(token))
+            {
+                context.Token = token;
+            }
+            return Task.CompletedTask;
+        },
+
+        OnChallenge = context =>
+        {
+            context.HandleResponse();
+            context.Response.Redirect("/Account/Login");
+            return Task.CompletedTask;
+        }
     };
 });
 
