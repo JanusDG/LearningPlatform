@@ -20,6 +20,13 @@ namespace LearningPlatform.Controllers
             _jwtService = jwtService;
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult Login()
+        {
+            return View();
+        }
+
 
         [HttpPost]
         [AllowAnonymous]
@@ -31,6 +38,7 @@ namespace LearningPlatform.Controllers
                 return Unauthorized();
             }
 
+            //Temporary debugging line
             Console.WriteLine($"YOU ARE LOGGED IN AS: {response.Username} WITH ROLE: {response.Role}");
 
             var accessToken = response.AccessToken;
@@ -39,7 +47,7 @@ namespace LearningPlatform.Controllers
             Response.Cookies.Append("jwt", accessToken, new CookieOptions
             {
                 HttpOnly = true,
-                Secure = false, 
+                Secure = false,
                 SameSite = SameSiteMode.Lax,
                 Expires = DateTimeOffset.UtcNow.AddHours(1)
             });
@@ -49,10 +57,20 @@ namespace LearningPlatform.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Login()
+        public IActionResult AccessDenied()
         {
-            return View();
+            TempData["Error"] = "You do not have permission to access this resource.";
+            return RedirectToAction("Error403", "Home"); // or return View() to render directly
         }
+
+
+        [HttpGet]
+        [Authorize]
+        public IActionResult Logout()
+        {
+            Response.Cookies.Delete("jwt");
+            return RedirectToAction("Login", "Account");
+        }       
 
     }
 }

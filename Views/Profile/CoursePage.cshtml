@@ -1,0 +1,39 @@
+@model LearningPlatform.Models.CourseViewIdModel
+
+@{
+    ViewBag.Title = "Course Page";
+    var currentRoute = ViewContext.RouteData.Values["controller"];
+    var CourseId = ViewBag.CourseId;
+}
+<h1>@Model.Name</h1>
+<p>@Model.Description</p>
+
+
+@if (Model.Lessons != null && Model.Lessons.Any())
+{
+    <table class="table table-bordered">
+        <thead class="table-light">
+            <tr>
+                <th>Lesson Name</th>
+                <th>Description</th>
+                <th>Page</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Lessons)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Description</td>
+                    <td>
+                        <a href="@Url.Action("LessonPage", "Profile", new { lessonId = item.Id })" class="btn btn-warning btn-sm">Go to course</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No lessons available for this course.</p>
+}

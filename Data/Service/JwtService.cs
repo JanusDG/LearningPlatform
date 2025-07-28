@@ -50,14 +50,14 @@ namespace LearningPlatform.Data.Service
 
             return new LoginResponseModel
             {
-                AccessToken = GenerateToken(user.Username, user.Role),
+                AccessToken = GenerateToken(user.Username, user.Role, user.Id),
                 Username = user.Username,
                 Role = user.Role,
                 ExpiresAt = DateTime.UtcNow.AddMinutes(_configuration.GetValue<int>("JwtConfig:ExpirationMinutes"))
             };
         }
 
-        public string GenerateToken(string username, string role)
+        public string GenerateToken(string username, string role, int id)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
 
@@ -72,6 +72,7 @@ namespace LearningPlatform.Data.Service
             {
                 Subject = new ClaimsIdentity(new[]
                 {
+                    new Claim(ClaimTypes.NameIdentifier, id.ToString()),
                     new Claim(ClaimTypes.Name, username),
                     new Claim(ClaimTypes.Role, role)
                 }),

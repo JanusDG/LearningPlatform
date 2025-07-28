@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using LearningPlatform.Models;
 using LearningPlatform.Data.Service;
 using LearningPlatform.Helpers;
+using Microsoft.AspNetCore.Authorization;
+
 namespace LearningPlatform.Controllers;
 
 public class CourseController : Controller
@@ -15,6 +17,7 @@ public class CourseController : Controller
         _courseService = courseService;
     }
 
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Index()
     {
         var courses = await _courseService.GetAllCoursesAsync();
@@ -22,6 +25,8 @@ public class CourseController : Controller
         return View(courseVMs);
     }
 
+    [HttpGet]
+    [Authorize(Roles = "Admin")]
     public IActionResult Create()
     {
         var model = new CourseViewModel
@@ -33,7 +38,9 @@ public class CourseController : Controller
 
         return View(model);
     }
+
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create(CourseViewModel courseVM)
     {
         if (ModelState.IsValid)
@@ -41,7 +48,8 @@ public class CourseController : Controller
             var courseEM = ViewEntityMapper.GetCourseEntityModel(courseVM);
             await _courseService.AddCourseAsync(courseEM);
             return RedirectToAction("Index");
-        }else 
+        }
+        else
         {
             var errors = ModelState.Values.SelectMany(v => v.Errors);
             foreach (var error in errors)
@@ -51,6 +59,9 @@ public class CourseController : Controller
         }
         return View(courseVM);
     }
+
+    [HttpGet]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Remove(int id)
     {
         var courseEM = await _courseService.FindCourseByIdAsync(id);
@@ -63,12 +74,15 @@ public class CourseController : Controller
     }
 
     [HttpPost("ConfirmRemove/{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> ConfirmRemove(int id)
     {
         await _courseService.RemoveCourseByIDAsync(id);
         return RedirectToAction("Index");
     }
 
+    [HttpGet]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Modify(int id)
     {
         var course = await _courseService.FindCourseByIdAsync(id);
@@ -81,6 +95,7 @@ public class CourseController : Controller
     }
 
     [HttpPost("SubmitModify/{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> SubmitModify(int id, CourseViewModel updatedCourse)
     {
         
@@ -100,6 +115,8 @@ public class CourseController : Controller
         return View(updatedCourse);
     }
 
+    [HttpGet]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> AssignSelectedUsers(int courseId)
     {
         var userEMs = await _courseService.GetAllUsersAsync();
@@ -111,9 +128,10 @@ public class CourseController : Controller
 
         ViewBag.CourseId = courseId;
         return View(userVMs);
-        }
+    }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> AssignToUser(int courseId, List<int> selectedUsersIds)
     {
         foreach (var userId in selectedUsersIds)
@@ -136,6 +154,8 @@ public class CourseController : Controller
         return RedirectToAction("Index", "Course");
     }
 
+    [HttpGet]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> CancelSelectedUsers(int courseId)
     {
         var courseUsersEMs = await _courseService.GetAllCourseUsersAsync(courseId);
@@ -150,6 +170,7 @@ public class CourseController : Controller
         }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> RemoveCourseFromUser(int courseId, List<int> selectedUsers)
     {
         foreach (var userId in selectedUsers)

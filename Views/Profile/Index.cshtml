@@ -1,0 +1,35 @@
+@model IEnumerable<LearningPlatform.Models.CourseViewIdModel>
+
+@{
+    ViewBag.Title = "Profile";
+    var currentRoute = ViewContext.RouteData.Values["controller"];
+
+}
+
+<h1>Profile</h1>
+
+<table class="table table-bordered">
+    <thead class="table-light">
+        <tr>
+            <th>Course Name</th>
+            <th>Description</th>
+            <th>Page</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Description</td>
+                <td>    
+                    <a href="@Url.Action("CoursePage", "Profile", new { courseId = item.Id })" class="btn btn-warning btn-sm">Go to course</a>
+
+
+                </td>
+                
+            </tr>
+        }
+    </tbody>
+</table>

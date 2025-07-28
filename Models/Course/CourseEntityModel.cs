@@ -14,7 +14,7 @@ namespace LearningPlatform.Models
         public string Name {get; set;} = default!;
         public string? Description {get; set;}
         // TODO: consider many to many relation between lessons and courses
-        public ICollection<LessonEntityModel>? Lessons {get; set;}
+        public ICollection<LessonEntityModel>? Lessons {get; set;} = default!;
     }
 
 }

@@ -3,6 +3,50 @@ using LearningPlatform.Models;
 namespace LearningPlatform.Helpers;
 public static class ViewEntityMapper {
     
+    public static LessonViewModel? GetLessonViewModel(LessonEntityModel? lesson)
+    {
+        return new LessonViewModel
+        {
+            Name = lesson.Name,
+            Description = lesson.Description,
+        };
+    }
+    public static List<LessonViewModel?> GetLessonViewModels(List<LessonEntityModel?> lessons)
+    {
+        return lessons.Select(lessonEM => 
+            GetLessonViewModel(lessonEM)
+            ).ToList();
+    }
+    public static LessonViewIdModel? GetLessonViewIdModel(LessonEntityModel? lesson)
+    {
+        return new LessonViewIdModel
+        {
+            Id = lesson.Id,
+            Name = lesson.Name,
+            Description = lesson.Description,
+        };
+    }
+    public static List<LessonViewIdModel?> GetLessonViewIdModels(List<LessonEntityModel?> lessons)
+    {
+        return lessons.Select(lessonEM => 
+            GetLessonViewIdModel(lessonEM)
+            ).ToList();
+    }
+    public static LessonEntityModel? GetLessonEntityModel(LessonViewModel? lesson)
+    {
+        return new LessonEntityModel
+        {
+            Name = lesson.Name,
+            Description = lesson.Description,
+        };
+    }
+    public static List<LessonEntityModel?> GetLessonEntityModels(List<LessonViewModel?> lessons)
+    {
+        return lessons.Select(lessonEM => 
+            GetLessonEntityModel(lessonEM)
+            ).ToList();
+    }
+
     public static CourseViewModel GetCourseViewModel(CourseEntityModel course)
     {
         return new CourseViewModel
@@ -10,20 +54,14 @@ public static class ViewEntityMapper {
             UserCourses = course.UserCourses,
             Name = course.Name,
             Description = course.Description,
-            Lessons = course.Lessons,
+            Lessons = course.Lessons?.Select(lesson => GetLessonViewModel(lesson)).ToList()
         };
     }
 
     public static List<CourseViewModel> GetCourseViewModels(List<CourseEntityModel> courses)
     {
         return courses.Select(courseEM => 
-            new CourseViewModel
-                {
-                    UserCourses = courseEM.UserCourses,
-                    Name = courseEM.Name,
-                    Description = courseEM.Description,
-                    Lessons = courseEM.Lessons,
-                }
+            GetCourseViewModel(courseEM)
             ).ToList();
     }
 
@@ -35,21 +73,14 @@ public static class ViewEntityMapper {
             UserCourses = course.UserCourses,
             Name = course.Name,
             Description = course.Description,
-            Lessons = course.Lessons,
+            Lessons = course.Lessons?.Select(lesson => GetLessonViewIdModel(lesson)).ToList()
         };
     }
 
     public static List<CourseViewIdModel> GetCourseViewIdModels(List<CourseEntityModel> courses)
     {
         return courses.Select(courseEM => 
-            new CourseViewIdModel
-                {
-                    Id = courseEM.Id,
-                    UserCourses = courseEM.UserCourses,
-                    Name = courseEM.Name,
-                    Description = courseEM.Description,
-                    Lessons = courseEM.Lessons,
-                }
+            GetCourseViewIdModel(courseEM)
             ).ToList();
     }
 
@@ -60,20 +91,14 @@ public static class ViewEntityMapper {
             UserCourses = course.UserCourses,
             Name = course.Name,
             Description = course.Description,
-            Lessons = course.Lessons,
+            Lessons = course.Lessons?.Select(lesson => GetLessonEntityModel(lesson)).ToList()
         };
     }
 
     public static List<CourseEntityModel> GetCourseEntityModels(List<CourseViewModel> courses)
     {
         return courses.Select(courseEM => 
-            new CourseEntityModel
-                {
-                    UserCourses = courseEM.UserCourses,
-                    Name = courseEM.Name,
-                    Description = courseEM.Description,
-                    Lessons = courseEM.Lessons,
-                }
+            GetCourseEntityModel(courseEM)
             ).ToList();
     }
 
@@ -92,14 +117,7 @@ public static class ViewEntityMapper {
     public static List<UserViewModel> GetUserViewModels(List<UserEntityModel> users)
     {
         return users.Select(userEM => 
-            new UserViewModel
-                {
-                    UserCourses = userEM.UserCourses,
-                    Username = userEM.Username,
-                    Firstname = userEM.Firstname,
-                    Surname = userEM.Surname,
-                    Email = userEM.Email,
-                }
+            GetUserViewModel(userEM)
             ).ToList();
     }
 
@@ -119,15 +137,7 @@ public static class ViewEntityMapper {
     public static List<UserViewIdModel> GetUserViewIdModels(List<UserEntityModel> users)
     {
         return users.Select(userEM => 
-            new UserViewIdModel
-                {
-                    Id = userEM.Id,
-                    UserCourses = userEM.UserCourses,
-                    Username = userEM.Username,
-                    Firstname = userEM.Firstname,
-                    Surname = userEM.Surname,
-                    Email = userEM.Email,
-                }
+            GetUserViewIdModel(userEM)
             ).ToList();
     }
 
@@ -147,15 +157,7 @@ public static class ViewEntityMapper {
     public static List<UserEntityModel> GetUserEntityModels(List<UserViewModel> users)
     {
         return users.Select(userEM => 
-            new UserEntityModel
-                {
-                    UserCourses = userEM.UserCourses,
-                    Username = userEM.Username,
-                    Firstname = userEM.Firstname,
-                    Surname = userEM.Surname,
-                    Email = userEM.Email,
-                    
-                }
+            GetUserEntityModel(userEM)
             ).ToList();
     }
 

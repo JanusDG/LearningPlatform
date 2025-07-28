@@ -46,3 +46,15 @@ button.accept-policy {
   white-space: nowrap;
   line-height: 60px;
 }
+
+.horizontal-list {
+  list-style: none;          /* remove bullets */
+  padding: 0;
+  margin: 0;
+  display: flex;             /* make list horizontal */
+  gap: 1rem;                 /* spacing between items */
+}
+
+.horizontal-list li {
+  display: inline;           /* optional if using flex */
+}

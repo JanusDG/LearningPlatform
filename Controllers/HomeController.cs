@@ -24,7 +24,14 @@ public class HomeController : Controller
         return View();
     }
 
+    [AllowAnonymous]
     public IActionResult Privacy()
+    {
+        return View();
+    }
+
+    [AllowAnonymous]
+    public IActionResult Error403()
     {
         return View();
     }

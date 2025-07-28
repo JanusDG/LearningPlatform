@@ -5,17 +5,20 @@ using LearningPlatform.Models;
 using LearningPlatform.Data.Service;
 using LearningPlatform.Helpers;
 using LearningPlatform.Handlers;
+using Microsoft.AspNetCore.Authorization;
+
 namespace LearningPlatform.Controllers;
 
 public class UserController : Controller
 {
     private readonly IUserService _userService;
-    
+
     public UserController(IUserService userService)
     {
         _userService = userService;
     }
 
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Index()
     {
         var users = await _userService.GetAllAsync();
@@ -23,6 +26,8 @@ public class UserController : Controller
         return View(userVMs);
     }
 
+    [HttpGet]
+    [Authorize(Roles = "Admin")]
     public IActionResult Create()
     {
         var model = new UserEntityModel
@@ -30,16 +35,17 @@ public class UserController : Controller
             //todo add some string hash for the default value for Username
             Username = "johndoe",
             Firstname = "John",
-            Role = "User", 
+            Role = "User",
             Surname = "Doe",
             Email = "john@example.com",
-            Password = "123456" 
+            Password = "123456"
         };
 
         return View(model);
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create(UserEntityModel userEM)
     {
         if (ModelState.IsValid)
@@ -47,7 +53,8 @@ public class UserController : Controller
             userEM.Password = PasswordHashHandler.HashPassword(userEM.Password);
             await _userService.AddAsync(userEM);
             return RedirectToAction("Index");
-        }else 
+        }
+        else
         {
             var errors = ModelState.Values.SelectMany(v => v.Errors);
             foreach (var error in errors)
@@ -57,6 +64,9 @@ public class UserController : Controller
         }
         return View(userEM);
     }
+
+    [HttpGet]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Remove(int id)
     {
         var userEM = await _userService.FindUserByIdAsync(id);
@@ -67,7 +77,9 @@ public class UserController : Controller
         var userVM = ViewEntityMapper.GetUserViewModel(userEM);
         return View(userVM);
     }
+
     [HttpPost("Course/ConfirmRemove/{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> ConfirmRemove(int id)
     {
         var userEM = await _userService.FindUserByIdAsync(id);
@@ -78,6 +90,8 @@ public class UserController : Controller
         return RedirectToAction("Index");
     }
 
+    [HttpGet]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Modify(int id)
     {
         var user = await _userService.FindUserByIdAsync(id);
@@ -90,13 +104,15 @@ public class UserController : Controller
     }
 
     [HttpPost("User/SubmitModify/{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> SubmitModify(int id, UserViewModel updatedUser)
     {
         if (ModelState.IsValid)
         {
             await _userService.UpdateUserByIDAsync(id, updatedUser);
-            return RedirectToAction("Index");   
-        }else 
+            return RedirectToAction("Index");
+        }
+        else
         {
             var errors = ModelState.Values.SelectMany(v => v.Errors);
             foreach (var error in errors)
@@ -108,6 +124,8 @@ public class UserController : Controller
         return View(updatedUser);
     }
 
+    [HttpGet]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> AssignSelectedCourses(int userId)
     {
         var courses = await _userService.GetAllCoursesAsync();
@@ -120,9 +138,10 @@ public class UserController : Controller
 
         ViewBag.UserId = userId;
         return View(courseVMs);
-        }
+    }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> AssignToCourse(int userId, List<int> selectedCourses)
     {
         foreach (var courseId in selectedCourses)
@@ -135,7 +154,7 @@ public class UserController : Controller
                 {
                     ifAdd = false;
                     break;
-                }  
+                }
             }
             if (ifAdd)
             {
@@ -145,6 +164,8 @@ public class UserController : Controller
         return RedirectToAction("Index", "User");
     }
 
+    [HttpGet]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> CancelSelectedCourses(int userId)
     {
         var userCourseEMs = await _userService.GetAllUserCoursesAsync(userId);
@@ -156,9 +177,10 @@ public class UserController : Controller
 
         ViewBag.UserId = userId;
         return View(courseVMs);
-        }
+    }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> RemoveUserFromCourse(int userId, List<int> selectedCourses)
     {
         foreach (var courseId in selectedCourses)
@@ -171,7 +193,7 @@ public class UserController : Controller
                 {
                     ifRemove = true;
                     break;
-                }  
+                }
             }
             if (ifRemove)
             {

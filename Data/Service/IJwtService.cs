@@ -8,6 +8,6 @@ namespace LearningPlatform.Data.Service
     public interface IJwtService
     {
         Task<LoginResponseModel?> AuthenticateAsync(LoginRequestModel loginRequest);
-        string GenerateToken(string username, string role);
+        string GenerateToken(string username, string role, int id);
     }
 }
