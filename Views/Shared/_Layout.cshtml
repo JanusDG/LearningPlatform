@@ -8,6 +8,27 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/LearningPlatform.styles.css" asp-append-version="true" />
+    <style>
+    /* Light yellow on hover */
+    .nav-link.text-dark:hover {
+        background-color: lightyellow;
+        color: black;
+    }
+
+    /* Light grey on click/active */
+    .nav-link.text-dark:active {
+        background-color: lightgrey;
+        color: black;
+    }
+
+    /* Optional: smoother transition */
+    .nav-link.text-dark {
+        transition: background-color 0.2s ease;
+        border-radius: 4px; /* makes the background look nicer */
+        padding: 5px 10px; /* optional, makes background more visible */
+    }
+</style>
+
 </head>
 <body>
     <header>

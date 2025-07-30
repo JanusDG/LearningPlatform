@@ -1,22 +1,21 @@
 # LearningPlatform
 
-## TODO
-* ISSUE http post -> change some of them to put (post - create, put - update)
+**LearningPlatform** is a non-commercial web application that simulates the functionality of an online course platform. Built with **ASP.NET Core MVC** and backed by an **MS SQL Server** database, the platform allows users to register, log in, and interact with course content based on their assigned roles.
 
-* DONE Authorize (via tokens or other) (redirect to login)
+## 🔧 Features
 
-* DONE course -> lessons(link to materials)
+- **JWT Authentication**: Secure access with JSON Web Tokens, supporting role-based authorization.
+- **Admin Interface**: Authenticated users with the **`admin`** role can:
+  - Add, edit, and remove **courses**
+  - Manage **users**
+- **User Interface**: Authenticated users with the **`user`** role can:
+  - Access their **profile page**
+  - View and explore all **available courses** assigned to them
 
-* DONE add other properties to models (paid course, ) (+/- 10 properties)
+## 🛠️ Tech Stack
 
-* DONE Models -> poco models
+- **Backend**: ASP.NET Core MVC
+- **Authentication**: JWT-based role authorization
+- **Database**: Microsoft SQL Server (EF Core)
+- **Frontend**: Razor Views, Bootstrap CSS, JavaScript
 
-* DONE one model for db, other(s) for UI (model for UI - without id, id - via routing)
-
-* DONE move logic from controllers to service
-
-* DONE rename async methods
-
-* DONE Model -> view model with (multiple display)
-        -> update model without id(where edit)
-        -> poco model for db
